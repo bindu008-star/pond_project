@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="measurement-container">
+    <header class="page-header">
+        <h1>Advanced Device Optimizer</h1>
+        <p class="subtitle">Define your pond boundary, place sensors, and find the mother gateway location.</p>
+    </header>
+
+    <div class="measurement-layout">
+        <div class="controls-panel measurement-card">
+            <h3>1. Navigation</h3>
+            <div class="input-group">
+                <label for="location-search">Search Location</label>
+                <input type="text" id="location-search" placeholder="e.g. Dhaka, Bangladesh">
+            </div>
+            <button id="search-btn" class="primary-btn">Search & Jump</button>
+
+            <hr class="divider">
+
+            <h3>2. Configuration Modes</h3>
+            <div class="mode-selector">
+                <button id="mode-boundary" class="mode-btn active" data-mode="boundary">
+                    <i class="fa-solid fa-draw-polygon"></i> 1. Set Bank
+                </button>
+                <button id="mode-nodes" class="mode-btn" data-mode="nodes">
+                    <i class="fa-solid fa-microchip"></i> 2. Place Nodes
+                </button>
+            </div>
+
+            <hr class="divider">
+
+            <h3>3. Instructions</h3>
+            <div id="instructions-container" class="instructions-list">
+                <p id="instr-boundary"><strong>Defining Bank:</strong> Click on the map to mark the corners of your
+                    pond. A blue boundary will form. Click the first point or use "Close Boundary" to finish.</p>
+                <p id="instr-nodes" style="display: none;"><strong>Adding Sensors:</strong> Now click inside your blue
+                    pond boundary to place nodes. The <strong>Green Gateway</strong> will appear on the bank
+                    automatically!</p>
+            </div>
+
+            <button id="undo-btn" class="secondary-btn" style="margin-top: 0.5rem; display: none;">
+                <i class="fa-solid fa-rotate-left"></i> Undo Last Point
+            </button>
+            <button id="clear-mode-data" class="secondary-btn" style="margin-top: 0.5rem;">Reset Current Phase</button>
+            <button id="reset-all" class="secondary-btn"
+                style="border-color: var(--accent-color); color: var(--accent-color);">Reset All</button>
+        </div>
+
+        <div class="canvas-panel measurement-card">
+            <div class="canvas-header">
+                <div class="status-badge" id="status-display">Mode: Set Bank</div>
+                <div id="optimal-location" class="location-text">Centroid: --</div>
+            </div>
+            <!-- Leaflet Map Container -->
+            <div id="map-container" class="map-responsive">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .map-responsive {
+        height: 600px;
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        z-index: 1;
+    }
+
+    @media (max-width: 900px) {
+        .map-responsive {
+            height: 400px;
+            /* Smaller height on mobile */
+        }
+    }
+
+    .mode-selector {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .mode-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: var(--bg-input);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .mode-btn.active {
+        background: rgba(14, 165, 233, 0.1);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        box-shadow: var(--shadow-glow);
+    }
+
+    .instructions-list p {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--text-muted);
+    }
+
+    .leaflet-container {
+        background: var(--bg-dark) !important;
+    }
+
+    .measurement-layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+        .measurement-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .controls-panel {
+            order: 2;
+        }
+
+        .canvas-panel {
+            order: 1;
+        }
+    }
+
+    .canvas-panel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .canvas-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .location-text {
+        font-size: 0.9rem;
+        color: var(--success);
+        font-weight: 500;
+    }
+</style>
+{% endblock %}

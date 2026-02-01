@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="page-header">
+        <h1>User Overview</h1>
+        <p class="subtitle">Real-time status of connected ponds</p>
+    </header>
+
+    <div class="cards-grid">
+        {% for user in users %}
+        <div class="user-card">
+            <div class="card-left">
+                <div class="user-image-wrapper">
+                    <img src="{{ user.image }}" alt="{{ user.name }}" class="user-image">
+                </div>
+                <div class="user-info">
+                    <h2 class="user-name">{{ user.name }}</h2>
+                    <div class="info-row">
+                        <span class="label">District:</span>
+                        <span class="value">{{ user.district }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Division:</span>
+                        <span class="value">{{ user.division }}</span>
+                    </div>
+                </div>
+                <a href="{{ user.map_link }}" target="_blank" class="map-btn">
+                    <i class="fa-solid fa-map"></i> View Map
+                </a>
+            </div>
+
+            <div class="card-right">
+                <h3 class="section-title">Pond Status</h3>
+                <div class="pond-list">
+                    {% for pond in user.ponds %}
+                    <div class="pond-item {{ pond.status }}">
+                        <div class="pond-icon">
+                            <i class="fa-solid fa-fish-fins"></i>
+                        </div>
+                        <div class="pond-details">
+                            <span class="pond-name">{{ pond.name }}</span>
+                            <span class="pond-status-text">
+                                {{ "Online" if pond.status == 'online' else "Offline" }}
+                            </span>
+                        </div>
+                        {% if pond.status == 'online' %}
+                        <button class="details-btn"
+                            onclick='showDetails({{ pond.metrics | tojson | safe }}, "{{ pond.name }}")'>
+                            Details
+                        </button>
+                        {% endif %}
+                        <div class="status-indicator"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalTitle">Pond Details</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem; margin-top: -1.5rem;">Last 7 Days Analysis</p>
+        <div class="charts-container">
+            <div class="chart-wrapper">
+                <h3>pH Levels</h3>
+                <canvas id="phChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h3>Ammonia (ppm)</h3>
+                <canvas id="ammoniaChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h3>Dissolved Oxygen (mg/L)</h3>
+                <canvas id="oxygenChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
